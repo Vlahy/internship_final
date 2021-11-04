@@ -15,16 +15,31 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/auth/register', [AuthController::class, 'register']);
+// Public routes
+Route::post('/auth/register', [AuthController::class, 'register']); // Register Route
+Route::post('/auth/login', [AuthController::class, 'login']); // Login Route
 
-Route::post('/auth/login', [AuthController::class, 'login']);
-
+// Token protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('/me', function (Request $request) {
         return auth()->user();
     });
 
-    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    // Routes only Admin can access
+    Route::group(['middleware' => ['role:admin']], function () {
+        //
+    });
 
+    // Routes only Recruiter can access
+    Route::group(['middleware' => ['role:recruiter']], function () {
+        //
+    });
+
+    // Routes only Mentor can access
+    Route::group(['middleware' => ['role:mentor']], function () {
+        //
+    });
+
+    Route::post('/auth/logout', [AuthController::class, 'logout']); // Logout route
 });
