@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\InternResource;
 use App\Models\Intern;
+use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InternController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -14,17 +18,9 @@ class InternController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $interns = InternResource::collection(Intern::all());
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return $interns;
     }
 
     /**
@@ -46,18 +42,9 @@ class InternController extends Controller
      */
     public function show(Intern $intern)
     {
-        //
-    }
+        $interns = new InternResource($intern);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Intern  $intern
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Intern $intern)
-    {
-        //
+        return $interns;
     }
 
     /**

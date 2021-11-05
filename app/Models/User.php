@@ -52,7 +52,7 @@ class User extends Authenticatable
      */
     public function group()
     {
-        $this->belongsTo(Group::class);
+        return $this->belongsTo(Group::class);
     }
 
     /**
@@ -62,6 +62,6 @@ class User extends Authenticatable
      */
     public function review()
     {
-        $this->hasMany(Review::class);
+        return $this->hasMany(Review::class);
     }
 }

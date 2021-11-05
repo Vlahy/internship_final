@@ -33,7 +33,7 @@ class Assignment extends Model
      */
     public function group()
     {
-        return $this->belongsToMany(Group::class);
+        return $this->belongsToMany(AssignmentGroup::class);
     }
 
     /**

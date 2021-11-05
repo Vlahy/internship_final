@@ -26,6 +26,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         return auth()->user();
     });
 
+    Route::resource('/interns', \App\Http\Controllers\InternController::class, ['only' => ['index','store', 'show', 'update', 'destroy']]);
+
     // Routes only Admin can access
     Route::group(['middleware' => ['role:admin']], function () {
         //
