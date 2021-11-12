@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreReviewRequest;
 use App\Http\Resources\ReviewResource;
 use App\Models\Review;
 use Illuminate\Http\Request;
@@ -27,12 +28,25 @@ class ReviewController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param StoreReviewRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreReviewRequest $request)
     {
-        //
+        try {
+            $validated = $request->validated();
+
+            Review::create($validated);
+            // todo validate if id's exists, and if user is in same group as intern (StoreReviewRequest)
+
+            return response([
+                'success' => "Review is added successfully."
+            ],200);
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage()
+            ],400);
+        }
     }
 
     /**

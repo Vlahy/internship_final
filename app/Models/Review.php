@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Enums\ReviewData;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Review extends Model
+class Review extends Model implements ReviewData
 {
     use HasFactory;
 
@@ -18,9 +19,11 @@ class Review extends Model
     protected $fillable = [
         'pros',
         'cons',
+        'mark',
         'assignment_id',
         'mentor_id',
         'intern_id',
+
     ];
 
     /**

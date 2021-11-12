@@ -17,6 +17,9 @@ class CreateReviewsTable extends Migration
             $table->id();
             $table->string('pros');
             $table->string('cons');
+            $table->string('mark')
+                ->nullable()
+                ->default(null);
             $table->foreignId('assignment_id')
                 ->nullable()
                 ->references('id')

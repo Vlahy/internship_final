@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Http\Requests;
+
+use App\Models\Review;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class StoreReviewRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            'pros' => 'required|string',
+            'cons' => 'required|string',
+            'mark' => [
+                'required',
+                'string',
+                Rule::in(Review::MARKS)],
+//            'assignment_id' => 'required',
+//            'mentor_id' => 'required',
+//            'intern_id' => 'required',
+        // todo validate if id's exists, and if user is in same group as intern
+        ];
+    }
+}

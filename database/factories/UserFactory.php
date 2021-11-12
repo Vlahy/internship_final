@@ -19,7 +19,6 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
-            'email_verified_at' => now(),
             'password' => $password ?: $password = bcrypt('12345678'),
             'city' => $this->faker->city(),
             'skype' => 'live:.cid.' . $this->faker->regexify('[A-Za-z0-9]{16}'),

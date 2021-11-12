@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAssignmentRequest;
 use App\Http\Resources\AssignmentResource;
 use App\Models\Assignment;
 use Illuminate\Http\Request;
@@ -27,12 +28,24 @@ class AssignmentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param StoreAssignmentRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreAssignmentRequest $request)
     {
-        //
+        try {
+            $validated = $request->validated();
+
+            Assignment::create($validated);
+
+            return response([
+                'success' => "Assignment is added successfully."
+            ],200);
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage()
+            ],400);
+        }
     }
 
     /**

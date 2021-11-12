@@ -18,7 +18,6 @@ class UserSeeder extends Seeder
         User::factory(1)->create([
             'name' => 'Admin',
             'email' => 'admin@admin.com',
-            'email_verified_at' => now(),
             'password' => bcrypt('12345678'),
             'city' => 'Cuprija',
             'skype' => 'live:.cid.G1UtZY7wJoTUbxCm',

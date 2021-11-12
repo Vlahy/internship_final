@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreInternRequest;
 use App\Http\Resources\InternResource;
 use App\Models\Intern;
 use Illuminate\Http\Request;
 
 class InternController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -28,12 +28,24 @@ class InternController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param StoreInternRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreInternRequest $request)
     {
-        //
+        try {
+            $validated = $request->validated();
+
+            Intern::create($validated);
+
+            return response([
+                'success' => "Intern is added successfully."
+            ],200);
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage()
+            ],400);
+        }
     }
 
     /**
