@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ReviewResource;
 use App\Models\Review;
 use Illuminate\Http\Request;
 
@@ -10,21 +11,17 @@ class ReviewController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\Response
      */
-    public function index()
+    public function index($intern)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        try {
+            return ReviewResource::collection(Review::where('intern_id', $intern)->paginate(10));
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage()
+            ],400);
+        }
     }
 
     /**
@@ -42,22 +39,21 @@ class ReviewController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Review  $review
-     * @return \Illuminate\Http\Response
+     * @return ReviewResource|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function show(Review $review)
+    public function show($intern ,$assignment)
     {
-        //
-    }
+        try {
+            $reviews = Review::where('assignment_id', $assignment)
+            ->where('intern_id', $intern)
+            ->get();
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Review  $review
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Review $review)
-    {
-        //
+            return new ReviewResource($reviews);
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage()
+            ],400);
+        }
     }
 
     /**
@@ -80,6 +76,17 @@ class ReviewController extends Controller
      */
     public function destroy(Review $review)
     {
-        //
+        try {
+            $review->delete();
+
+            return response([
+                'success' => 'Review deleted successfully.'
+            ],200);
+
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage()
+            ],400);
+        }
     }
 }

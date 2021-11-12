@@ -23,7 +23,10 @@ class Group extends Model
      *
      * @var array
      */
-    protected $hidden = [];
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
 
     /**
      * Returns relationship with User Model
@@ -32,7 +35,7 @@ class Group extends Model
      */
     public function mentor()
     {
-        $this->hasMany(User::class);
+        return $this->hasMany(User::class);
     }
 
     /**
@@ -42,16 +45,22 @@ class Group extends Model
      */
     public function intern()
     {
-        $this->hasMany(Intern::class);
+        return $this->hasMany(Intern::class);
     }
 
     /**
      * Returns relationship with Assignment Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function assignment()
     {
-        $this->hasMany(Assignment::class);
+        return $this->belongsToMany(Assignment::class, 'assignment_groups')
+            ->withPivot(
+                'start_date',
+                'end_date',
+                'is_active'
+            );
     }
+
 }

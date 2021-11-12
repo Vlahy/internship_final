@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\InternResource;
-use App\Models\Intern;
+use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class InternController extends Controller
+class UserController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -17,11 +16,11 @@ class InternController extends Controller
     public function index()
     {
         try {
-            return InternResource::collection(Intern::with('group')->paginate(10));
+            return UserResource::collection(User::paginate(10));
         }catch (\Exception $e){
             return response([
                 'error' => $e->getMessage()
-            ],403);
+            ]);
         }
     }
 
@@ -39,16 +38,16 @@ class InternController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Intern  $intern
-     * @return InternResource|\Illuminate\Http\Response
+     * @param  \App\Models\User  $user
+     * @return UserResource|\Illuminate\Http\Response
      */
-    public function show(Intern $intern)
+    public function show(User $user)
     {
         try {
-            $interns = Intern::with(['group','group.assignment'])->find($intern->id);
+            $mentor = User::with(['group','group.intern'])->find($user->id);
 
-            return new InternResource($interns);
-        }catch (\Exception $e) {
+            return new UserResource($mentor);
+        }catch (\Exception $e){
             return response([
                 'error' => $e->getMessage()
             ]);
@@ -59,10 +58,10 @@ class InternController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Intern  $intern
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Intern $intern)
+    public function update(Request $request, User $user)
     {
         //
     }
@@ -70,16 +69,16 @@ class InternController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Intern  $intern
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Intern $intern)
+    public function destroy(User $user)
     {
         try {
-            $intern->delete();
+            $user->delete();
 
             return response([
-                'success' => 'Intern deleted successfully.'
+                'success' => 'Mentor deleted successfully.'
             ],200);
 
         }catch (\Exception $e){

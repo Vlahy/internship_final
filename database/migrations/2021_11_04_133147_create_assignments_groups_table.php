@@ -18,11 +18,13 @@ class CreateAssignmentsGroupsTable extends Migration
             $table->foreignId('assignment_id')
                 ->nullable()
                 ->references('id')
-                ->on('assignments');
+                ->on('assignments')
+                ->cascadeOnDelete();
             $table->foreignId('group_id')
                 ->nullable()
                 ->references('id')
-                ->on('groups');
+                ->on('groups')
+                ->cascadeOnDelete();
             $table->date('start_date')
                 ->nullable()
                 ->default(null);

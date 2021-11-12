@@ -26,6 +26,31 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         return auth()->user();
     });
 
+    // Intern routes
+    Route::get('/interns', [\App\Http\Controllers\InternController::class, 'index']);
+    Route::get('/interns/{intern}', [\App\Http\Controllers\InternController::class, 'show']);
+    Route::delete('/interns/{intern}', [\App\Http\Controllers\InternController::class, 'destroy']);
+
+    // Group routes
+    Route::get('/groups', [\App\Http\Controllers\GroupController::class, 'index']);
+    Route::get('/groups/{group}', [\App\Http\Controllers\GroupController::class, 'show']);
+    Route::delete('/groups/{group}', [\App\Http\Controllers\GroupController::class, 'destroy']);
+
+    // Assignment routes
+    Route::get('/assignments', [\App\Http\Controllers\AssignmentController::class, 'index']);
+    Route::get('/assignments/{assignment}', [\App\Http\Controllers\AssignmentController::class, 'show']);
+    Route::delete('/assignments/{assignment}', [\App\Http\Controllers\AssignmentController::class, 'destroy']);
+
+    // Mentor routes
+    Route::get('/mentors', [\App\Http\Controllers\UserController::class, 'index']);
+    Route::get('/mentors/{user}', [\App\Http\Controllers\UserController::class, 'show']);
+    Route::delete('/mentors/{user}', [\App\Http\Controllers\UserController::class, 'destroy']);
+
+    // Review routes
+    Route::get('/interns/{intern}/assignments', [\App\Http\Controllers\ReviewController::class, 'index']);
+    Route::get('/interns/{intern}/assignments/{review}', [\App\Http\Controllers\ReviewController::class, 'show']);
+    Route::delete('/reviews/{review}', [\App\Http\Controllers\ReviewController::class, 'destroy']);
+
     // Routes only Admin can access
     Route::group(['middleware' => ['role:admin']], function () {
         //

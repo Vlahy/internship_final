@@ -30,7 +30,10 @@ class Intern extends Model
      *
      * @var array
      */
-    protected $hidden = [];
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
 
     /**
      * Returns relationship with Group Model
@@ -39,7 +42,7 @@ class Intern extends Model
      */
     public function group()
     {
-        $this->belongsTo(Group::class);
+        return $this->belongsTo(Group::class);
     }
 
     /**
@@ -49,7 +52,7 @@ class Intern extends Model
      */
     public function review()
     {
-        $this->hasMany(Review::class);
+        return $this->HasMany(Review::class, 'intern_id');
     }
 
 }

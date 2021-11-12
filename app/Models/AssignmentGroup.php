@@ -32,20 +32,20 @@ class AssignmentGroup extends Model
     /**
      * Returns relationship with Assignment Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function assignment()
     {
-        $this->belongsToMany(Assignment::class);
+        return $this->hasMany(AssignmentGroup::class);
     }
 
     /**
      * Returns relationship with Group Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function group()
     {
-        $this->belongsToMany(Group::class);
+        return $this->hasMany(Group::class);
     }
 }

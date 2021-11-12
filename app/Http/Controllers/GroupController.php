@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GroupResource;
 use App\Models\Group;
 use Illuminate\Http\Request;
 
@@ -10,21 +11,17 @@ class GroupController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\Response
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        try {
+            return GroupResource::collection(Group::paginate(10));
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage()
+            ],403);
+        }
     }
 
     /**
@@ -42,22 +39,22 @@ class GroupController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Group  $group
-     * @return \Illuminate\Http\Response
+     * @return GroupResource|\Illuminate\Http\Response
      */
     public function show(Group $group)
     {
-        //
-    }
+        try {
+            $groups = Group::with(['mentor','intern','assignment' => function ($query) {
+                $query->where('is_active', true);
+            }])
+                ->find($group->id);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Group  $group
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Group $group)
-    {
-        //
+            return new GroupResource($groups);
+        }catch (\Exception $e) {
+            return response([
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -80,6 +77,17 @@ class GroupController extends Controller
      */
     public function destroy(Group $group)
     {
-        //
+        try {
+            $group->delete();
+
+            return response([
+                'success' => 'Group deleted successfully.'
+            ],200);
+
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage()
+            ],400);
+        }
     }
 }
