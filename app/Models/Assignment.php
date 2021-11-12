@@ -24,7 +24,10 @@ class Assignment extends Model
      *
      * @var array
      */
-    protected $hidden = [];
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
 
     /**
      * Returns relationship with Group Model
@@ -33,7 +36,7 @@ class Assignment extends Model
      */
     public function group()
     {
-        return $this->belongsToMany(AssignmentGroup::class);
+        return $this->belongsToMany(Group::class, 'assignment_groups');
     }
 
     /**
@@ -43,6 +46,6 @@ class Assignment extends Model
      */
     public function review()
     {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(Review::class, 'assignment_id');
     }
 }

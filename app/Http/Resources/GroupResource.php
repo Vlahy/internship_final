@@ -16,7 +16,13 @@ class GroupResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'type' => 'Group',
+            'attributes' => [
+                'name' => $this->name,
+                'mentors' => $this->whenLoaded('mentor'),
+                'interns' => $this->whenLoaded('intern'),
+                'assignments' => $this->whenLoaded('assignment'),
+                ],
         ];
     }
 }

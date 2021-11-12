@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AssignmentResource;
 use App\Models\Assignment;
 use Illuminate\Http\Request;
 
@@ -10,11 +11,17 @@ class AssignmentController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        try {
+            return AssignmentResource::collection(Assignment::paginate());
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage()
+            ],403);
+        }
     }
 
     /**
@@ -32,11 +39,17 @@ class AssignmentController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Assignment  $assignment
-     * @return \Illuminate\Http\Response
+     * @return AssignmentResource|\Illuminate\Http\Response
      */
     public function show(Assignment $assignment)
     {
-        //
+        try {
+            return new AssignmentResource($assignment);
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -59,6 +72,17 @@ class AssignmentController extends Controller
      */
     public function destroy(Assignment $assignment)
     {
-        //
+        try {
+            $assignment->delete();
+
+            return response([
+                'success' => 'Assignment deleted successfully.'
+            ],200);
+
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage()
+            ],400);
+        }
     }
 }

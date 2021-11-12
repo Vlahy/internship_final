@@ -14,6 +14,21 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+        // Create default admin user
+        User::factory(1)->create([
+            'name' => 'Admin',
+            'email' => 'admin@admin.com',
+            'email_verified_at' => now(),
+            'password' => bcrypt('12345678'),
+            'city' => 'Cuprija',
+            'skype' => 'live:.cid.G1UtZY7wJoTUbxCm',
+            'group_id' => '1',
+        ])
+            ->each(function ($user) {
+            $user->assignRole('admin');
+        });;
+
+        // Create 20 more users
         User::factory(20)->create()->each(function ($user) {
             $user->assignRole('mentor');
         });

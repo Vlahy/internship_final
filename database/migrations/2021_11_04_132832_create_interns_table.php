@@ -26,7 +26,7 @@ class CreateInternsTable extends Migration
                 ->nullable()
                 ->references('id')
                 ->on('groups')
-                ->cascadeOnDelete();
+                ->nullOnDelete();
             $table->timestamps();
         });
     }

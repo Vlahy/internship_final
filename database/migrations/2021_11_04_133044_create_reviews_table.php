@@ -20,15 +20,18 @@ class CreateReviewsTable extends Migration
             $table->foreignId('assignment_id')
                 ->nullable()
                 ->references('id')
-                ->on('assignments');
+                ->on('assignments')
+                ->nullOnDelete();
             $table->foreignId('mentor_id')
                 ->nullable()
                 ->references('id')
-                ->on('users');
+                ->on('users')
+                ->nullOnDelete();
             $table->foreignId('intern_id')
                 ->nullable()
                 ->references('id')
-                ->on('interns');
+                ->on('interns')
+                ->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -34,6 +34,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'created_at',
+        'updated_at',
+        'email_verified_at'
     ];
 
     /**
@@ -62,6 +65,6 @@ class User extends Authenticatable
      */
     public function review()
     {
-        return $this->hasMany(Review::class);
+        return $this->HasMany(Review::class, 'mentor_id');
     }
 }

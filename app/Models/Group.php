@@ -25,7 +25,7 @@ class Group extends Model
      */
     protected $hidden = [
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     /**
@@ -55,7 +55,12 @@ class Group extends Model
      */
     public function assignment()
     {
-        return $this->belongsToMany(AssignmentGroup::class);
+        return $this->belongsToMany(Assignment::class, 'assignment_groups')
+            ->withPivot(
+                'start_date',
+                'end_date',
+                'is_active'
+            );
     }
 
 }

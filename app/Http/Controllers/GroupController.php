@@ -11,19 +11,17 @@ class GroupController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\Response
      */
     public function index()
     {
-        $groups = GroupResource::collection(Group::all());
-
-        if (!$groups)
-        {
+        try {
+            return GroupResource::collection(Group::paginate(10));
+        }catch (\Exception $e){
             return response([
-                'error' => 'There are not interns in database'
-            ], 404);
+                'error' => $e->getMessage()
+            ],403);
         }
-        return $groups;
     }
 
     /**
@@ -41,11 +39,22 @@ class GroupController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Group  $group
-     * @return \Illuminate\Http\Response
+     * @return GroupResource|\Illuminate\Http\Response
      */
     public function show(Group $group)
     {
-        //
+        try {
+            $groups = Group::with(['mentor','intern','assignment' => function ($query) {
+                $query->where('is_active', true);
+            }])
+                ->find($group->id);
+
+            return new GroupResource($groups);
+        }catch (\Exception $e) {
+            return response([
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -68,6 +77,17 @@ class GroupController extends Controller
      */
     public function destroy(Group $group)
     {
-        //
+        try {
+            $group->delete();
+
+            return response([
+                'success' => 'Group deleted successfully.'
+            ],200);
+
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage()
+            ],400);
+        }
     }
 }

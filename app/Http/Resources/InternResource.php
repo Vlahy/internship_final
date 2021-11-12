@@ -25,7 +25,7 @@ class InternResource extends JsonResource
                     'phone' => $this->phone,
                     'cv' => $this->cv,
                     'github' => $this->github,
-                    'group' => $this->whenLoaded('group', $this->group),
+                    'group' => $this->whenLoaded('group'),
                 ]
         ];
     }
