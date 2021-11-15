@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreReviewRequest;
+use App\Http\Requests\UpdateReviewRequest;
 use App\Http\Resources\ReviewResource;
+use App\Models\Intern;
 use App\Models\Review;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
@@ -34,14 +36,49 @@ class ReviewController extends Controller
     public function store(StoreReviewRequest $request)
     {
         try {
+
             $validated = $request->validated();
+            $user = Auth::user();
 
-            Review::create($validated);
-            // todo validate if id's exists, and if user is in same group as intern (StoreReviewRequest)
+            if($user->hasRole('mentor')){
 
-            return response([
-                'success' => "Review is added successfully."
-            ],200);
+                $intern = Intern::where('id', $validated['intern_id'])->first();
+
+                if ($user->group_id == $intern->group_id){
+
+                    $internAssignment = $intern->group->assignment->pluck('id')->toArray();
+
+                    if(in_array($validated['assignment_id'], $internAssignment)){
+
+                        Review::create([
+                            'pros' => $validated['pros'],
+                            'cons' => $validated['cons'],
+                            'mark' => $validated['mark'],
+                            'assignment_id' => $validated['assignment_id'],
+                            'mentor_id' => $user->id,
+                            'intern_id' => $validated['intern_id'],
+                        ]);
+
+                        return response([
+                            'success' => "Review is added successfully."
+                        ],200);
+                    }else{
+                        return response([
+                            'error' => 'Intern does not have that assignment!'
+                        ],200);
+                    }
+
+                }else{
+                    return response([
+                        'error' => 'Mentor is not in the same group as intern!'
+                    ],400);
+                }
+
+            }else{
+                return response([
+                    'error' => 'User is not a mentor!'
+                ],400);
+            }
         }catch (\Exception $e){
             return response([
                 'error' => $e->getMessage()
@@ -52,7 +89,7 @@ class ReviewController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Review  $review
+     * @param Review $review
      * @return ReviewResource|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function show($intern ,$assignment)
@@ -73,19 +110,36 @@ class ReviewController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Review  $review
+     * @param UpdateReviewRequest $request
+     * @param Review $review
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Review $review)
+    public function update(UpdateReviewRequest $request, Review $review)
     {
-        //
+        try {
+            $user = Auth::user();
+            if ($user->id == $review->mentor_id) {
+
+                $review->update($request->all());
+                return response([
+                    'success' => 'Review updated successfully!',
+                ], 200);
+            }else{
+                return response([
+                    'error' => 'Only mentor that did review can edit this review.'
+                ]);
+            }
+        }catch(\Exception $e){
+            return response([
+                'error' => $e->getMessage(),
+            ],400);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Review  $review
+     * @param Review $review
      * @return \Illuminate\Http\Response
      */
     public function destroy(Review $review)

@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreInternRequest;
+use App\Http\Requests\UpdateInternRequest;
 use App\Http\Resources\InternResource;
+use App\Models\Group;
 use App\Models\Intern;
-use Illuminate\Http\Request;
 
 class InternController extends Controller
 {
@@ -51,7 +52,7 @@ class InternController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Intern  $intern
+     * @param Intern $intern
      * @return InternResource|\Illuminate\Http\Response
      */
     public function show(Intern $intern)
@@ -70,19 +71,43 @@ class InternController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Intern  $intern
+     * @param UpdateInternRequest $request
+     * @param Intern $intern
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Intern $intern)
+    public function update(UpdateInternRequest $request, Intern $intern)
     {
-        //
+        try {
+            if ($request->group_id != null) {
+                $group = Group::all()->pluck('id')->toArray();
+
+                if (!in_array($request->group_id, $group)) {
+                    return response([
+                        'error' => 'That group does not exists!'
+                    ], 400);
+                }
+                $intern->update($request->all());
+
+                return response([
+                    'success' => 'Intern updated successfully!',
+                ],200);
+            }
+            $intern->update($request->all());
+
+            return response([
+                'success' => 'Intern updated successfully!',
+            ],200);
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage(),
+            ],400);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Intern  $intern
+     * @param Intern $intern
      * @return \Illuminate\Http\Response
      */
     public function destroy(Intern $intern)

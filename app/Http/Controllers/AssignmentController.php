@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAssignmentRequest;
+use App\Http\Requests\UpdateAssignmentRequest;
 use App\Http\Resources\AssignmentResource;
 use App\Models\Assignment;
 use Illuminate\Http\Request;
@@ -51,7 +52,7 @@ class AssignmentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Assignment  $assignment
+     * @param Assignment $assignment
      * @return AssignmentResource|\Illuminate\Http\Response
      */
     public function show(Assignment $assignment)
@@ -68,19 +69,29 @@ class AssignmentController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Assignment  $assignment
+     * @param UpdateAssignmentRequest $request
+     * @param Assignment $assignment
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Assignment $assignment)
+    public function update(UpdateAssignmentRequest $request, Assignment $assignment)
     {
-        //
+        try {
+            $assignment->update($request->all());
+
+            return response([
+                'success' => 'Assignment updated successfully!',
+            ],200);
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage(),
+            ],400);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Assignment  $assignment
+     * @param Assignment $assignment
      * @return \Illuminate\Http\Response
      */
     public function destroy(Assignment $assignment)

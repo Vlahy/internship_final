@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -60,7 +62,7 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\User  $user
+     * @param User $user
      * @return UserResource|\Illuminate\Http\Response
      */
     public function show(User $user)
@@ -79,19 +81,35 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
+     * @param UpdateUserRequest $request
+     * @param User $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        //
+        try {
+            if(Auth::user()->id == $user['id']) {
+                $user->update($request->all());
+
+                return response([
+                    'success' => 'User updated successfully!',
+                ], 200);
+            }else{
+                return response([
+                    'error' => 'Unauthorized'
+                ],401);
+            }
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage(),
+            ],400);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\User  $user
+     * @param User $user
      * @return \Illuminate\Http\Response
      */
     public function destroy(User $user)

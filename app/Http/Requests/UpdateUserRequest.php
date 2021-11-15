@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Review;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class StoreReviewRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,14 +24,12 @@ class StoreReviewRequest extends FormRequest
     public function rules()
     {
         return [
-            'pros' => 'required|string',
-            'cons' => 'required|string',
-            'mark' => [
-                'required',
-                'string',
-                Rule::in(Review::MARKS)],
-            'assignment_id' => 'required',
-            'intern_id' => 'required',
+            'name' => 'string',
+            'email' => 'string|email',
+            'password' => 'password|min:8|confirmed',
+            'city' => 'string',
+            'skype' => 'string',
+            'group_id' => 'string',
         ];
     }
 }
