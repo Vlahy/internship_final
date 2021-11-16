@@ -6,7 +6,6 @@ use App\Http\Requests\StoreAssignmentRequest;
 use App\Http\Requests\UpdateAssignmentRequest;
 use App\Http\Resources\AssignmentResource;
 use App\Models\Assignment;
-use Illuminate\Http\Request;
 
 class AssignmentController extends Controller
 {

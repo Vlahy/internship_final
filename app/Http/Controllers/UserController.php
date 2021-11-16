@@ -6,8 +6,8 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -124,6 +124,34 @@ class UserController extends Controller
         }catch (\Exception $e){
             return response([
                 'error' => $e->getMessage()
+            ],400);
+        }
+    }
+
+    /**
+     * Change role of specific user.
+     *
+     * @param Request $request
+     * @param User $user
+     * @return \Illuminate\Http\Response
+     */
+    public function changeRole(User $user, Request $request)
+    {
+        try {
+            $this->validate($request, [
+                'role' => 'required'
+            ]);
+            $input = $request->all();
+
+            $user->syncRoles($request->input('role'));
+
+            return response([
+                'success' => 'Role successfully changed.',
+            ],200);
+
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage(),
             ],400);
         }
     }

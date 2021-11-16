@@ -40,8 +40,6 @@ class ReviewController extends Controller
             $validated = $request->validated();
             $user = Auth::user();
 
-            if($user->hasRole('mentor')){
-
                 $intern = Intern::where('id', $validated['intern_id'])->first();
 
                 if ($user->group_id == $intern->group_id){
@@ -74,11 +72,6 @@ class ReviewController extends Controller
                     ],400);
                 }
 
-            }else{
-                return response([
-                    'error' => 'User is not a mentor!'
-                ],400);
-            }
         }catch (\Exception $e){
             return response([
                 'error' => $e->getMessage()

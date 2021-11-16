@@ -9,8 +9,6 @@ use App\Http\Resources\GroupResource;
 use App\Models\Assignment;
 use App\Models\AssignmentGroup;
 use App\Models\Group;
-use Illuminate\Http\Request;
-use Nette\Utils\DateTime;
 
 class GroupController extends Controller
 {
@@ -201,7 +199,13 @@ class GroupController extends Controller
     {
         if (!in_array($assignment->id, $group->assignment->pluck('id')->toArray())){
 
-            // todo add logic for connecting assignment and group
+            AssignmentGroup::create([
+                'assignment_id' => $assignment->id,
+                'group_id' => $group->id,
+                'start_date' => null,
+                'end_date' => null,
+                'is_active' => false,
+            ]);
 
             return response([
                 'success' => 'Assignment is added',

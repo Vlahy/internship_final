@@ -2,8 +2,6 @@
 
 namespace App\Traits;
 
-use Carbon\Carbon;
-
 /*
 |--------------------------------------------------------------------------
 | Api Responser Trait
