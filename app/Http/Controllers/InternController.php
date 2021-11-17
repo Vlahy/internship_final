@@ -58,9 +58,10 @@ class InternController extends Controller
     public function show(Intern $intern)
     {
         try {
-            $interns = Intern::with(['group','group.assignment'])->find($intern->id);
+            $intern->load(['group.assignment']);
+            $intern->group->assignment->makeHidden('pivot');
 
-            return new InternResource($interns);
+            return new InternResource($intern);
         }catch (\Exception $e) {
             return response([
                 'error' => $e->getMessage()
