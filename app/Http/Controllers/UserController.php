@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChangeRoleRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -14,7 +17,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\Response
+     * @return AnonymousResourceCollection|Response
      */
     public function index()
     {
@@ -23,7 +26,7 @@ class UserController extends Controller
         }catch (\Exception $e){
             return response([
                 'error' => $e->getMessage()
-            ]);
+            ],400);
         }
     }
 
@@ -31,9 +34,9 @@ class UserController extends Controller
      * Store a newly created resource in storage.
      *
      * @param StoreUserRequest $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request): Response
     {
         try {
             $validated = $request->validated();
@@ -63,18 +66,18 @@ class UserController extends Controller
      * Display the specified resource.
      *
      * @param User $user
-     * @return UserResource|\Illuminate\Http\Response
+     * @return UserResource|Response
      */
     public function show(User $user)
     {
         try {
-            $mentor = User::with(['group','group.intern'])->find($user->id);
+            $user->load(['group', 'group.intern']);
 
-            return new UserResource($mentor);
+            return new UserResource($user);
         }catch (\Exception $e){
             return response([
                 'error' => $e->getMessage()
-            ]);
+            ],400);
         }
     }
 
@@ -83,13 +86,15 @@ class UserController extends Controller
      *
      * @param UpdateUserRequest $request
      * @param User $user
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function update(UpdateUserRequest $request, User $user)
+    public function update(UpdateUserRequest $request, User $user): Response
     {
         try {
             if(Auth::user()->id == $user['id']) {
-                $user->update($request->all());
+                $validated = $request->validated();
+
+                $user->update($validated);
 
                 return response([
                     'success' => 'User updated successfully!',
@@ -97,7 +102,7 @@ class UserController extends Controller
             }else{
                 return response([
                     'error' => 'Unauthorized'
-                ],401);
+                ],403);
             }
         }catch (\Exception $e){
             return response([
@@ -110,9 +115,9 @@ class UserController extends Controller
      * Remove the specified resource from storage.
      *
      * @param User $user
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function destroy(User $user)
+    public function destroy(User $user): Response
     {
         try {
             $user->delete();
@@ -131,19 +136,16 @@ class UserController extends Controller
     /**
      * Change role of specific user.
      *
-     * @param Request $request
      * @param User $user
-     * @return \Illuminate\Http\Response
+     * @param ChangeRoleRequest $request
+     * @return Response
      */
-    public function changeRole(User $user, Request $request)
+    public function changeRole(User $user, ChangeRoleRequest $request): Response
     {
         try {
-            $this->validate($request, [
-                'role' => 'required'
-            ]);
-            $input = $request->all();
+            $validated = $request->validated();
 
-            $user->syncRoles($request->input('role'));
+            $user->syncRoles($validated);
 
             return response([
                 'success' => 'Role successfully changed.',

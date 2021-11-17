@@ -7,13 +7,15 @@ use App\Http\Requests\UpdateInternRequest;
 use App\Http\Resources\InternResource;
 use App\Models\Group;
 use App\Models\Intern;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class InternController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\Response
+     * @return AnonymousResourceCollection|Response
      */
     public function index()
     {
@@ -22,7 +24,7 @@ class InternController extends Controller
         }catch (\Exception $e){
             return response([
                 'error' => $e->getMessage()
-            ],403);
+            ],400);
         }
     }
 
@@ -30,9 +32,9 @@ class InternController extends Controller
      * Store a newly created resource in storage.
      *
      * @param StoreInternRequest $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function store(StoreInternRequest $request)
+    public function store(StoreInternRequest $request): Response
     {
         try {
             $validated = $request->validated();
@@ -53,7 +55,7 @@ class InternController extends Controller
      * Display the specified resource.
      *
      * @param Intern $intern
-     * @return InternResource|\Illuminate\Http\Response
+     * @return InternResource|Response
      */
     public function show(Intern $intern)
     {
@@ -65,7 +67,7 @@ class InternController extends Controller
         }catch (\Exception $e) {
             return response([
                 'error' => $e->getMessage()
-            ]);
+            ],400);
         }
     }
 
@@ -74,9 +76,9 @@ class InternController extends Controller
      *
      * @param UpdateInternRequest $request
      * @param Intern $intern
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function update(UpdateInternRequest $request, Intern $intern)
+    public function update(UpdateInternRequest $request, Intern $intern): Response
     {
         try {
             if ($request->group_id != null) {
@@ -109,9 +111,9 @@ class InternController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Intern $intern
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function destroy(Intern $intern)
+    public function destroy(Intern $intern): Response
     {
         try {
             $intern->delete();

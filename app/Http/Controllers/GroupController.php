@@ -9,13 +9,15 @@ use App\Http\Resources\GroupResource;
 use App\Models\Assignment;
 use App\Models\AssignmentGroup;
 use App\Models\Group;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class GroupController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\Response
+     * @return AnonymousResourceCollection|Response
      */
     public function index()
     {
@@ -24,7 +26,7 @@ class GroupController extends Controller
         }catch (\Exception $e){
             return response([
                 'error' => $e->getMessage()
-            ],403);
+            ],400);
         }
     }
 
@@ -32,9 +34,9 @@ class GroupController extends Controller
      * Store a newly created resource in storage.
      *
      * @param StoreGroupRequest $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function store(StoreGroupRequest $request)
+    public function store(StoreGroupRequest $request): Response
     {
         try {
             $validated = $request->validated();
@@ -55,21 +57,21 @@ class GroupController extends Controller
      * Display the specified resource.
      *
      * @param Group $group
-     * @return GroupResource|\Illuminate\Http\Response
+     * @return GroupResource|Response
      */
     public function show(Group $group)
     {
         try {
-            $groups = Group::with(['mentor','intern','assignment' => function ($query) {
-                $query->where('is_active', true);
-            }])
-                ->find($group->id);
+            $group->load(['mentor', 'intern', 'assignment']);
+            $group->assignment->where('pivot.is_active', true)->each(function ($query) {
+                $query->makeVisible(['pivot']);
+            });
 
-            return new GroupResource($groups);
+            return new GroupResource($group);
         }catch (\Exception $e) {
             return response([
                 'error' => $e->getMessage()
-            ]);
+            ],400);
         }
     }
 
@@ -78,12 +80,14 @@ class GroupController extends Controller
      *
      * @param UpdateGroupRequest $request
      * @param Group $group
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(UpdateGroupRequest $request, Group $group)
     {
         try {
-            $group->update($request->all());
+            $validated = $request->validated();
+
+            $group->update($validated);
 
             return response([
                 'success' => 'Group updated successfully!',
@@ -99,7 +103,7 @@ class GroupController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Group $group
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy(Group $group)
     {
@@ -123,7 +127,7 @@ class GroupController extends Controller
      * @param ActivateAssignmentRequest $request
      * @param Group $group
      * @param Assignment $assignment
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function activateAssignment(ActivateAssignmentRequest $request, Group $group, Assignment $assignment)
     {
@@ -150,7 +154,7 @@ class GroupController extends Controller
         }else{
             return response([
                 'error' => 'Group does not have that assignment!'
-            ]);
+            ],400);
         }
     }
 
@@ -159,7 +163,7 @@ class GroupController extends Controller
      *
      * @param Group $group
      * @param Assignment $assignment
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function deactivateAssignment(Group $group, Assignment $assignment)
     {
@@ -184,7 +188,7 @@ class GroupController extends Controller
         }else{
             return response([
                 'error' => 'Group does not have that assignment!'
-            ]);
+            ],400);
         }
     }
 
@@ -193,7 +197,7 @@ class GroupController extends Controller
      *
      * @param Group $group
      * @param Assignment $assignment
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function addAssignment(Group $group, Assignment $assignment)
     {

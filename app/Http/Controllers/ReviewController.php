@@ -7,6 +7,8 @@ use App\Http\Requests\UpdateReviewRequest;
 use App\Http\Resources\ReviewResource;
 use App\Models\Intern;
 use App\Models\Review;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
@@ -14,7 +16,7 @@ class ReviewController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\Response
+     * @return AnonymousResourceCollection|Response
      */
     public function index($intern)
     {
@@ -31,9 +33,9 @@ class ReviewController extends Controller
      * Store a newly created resource in storage.
      *
      * @param StoreReviewRequest $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function store(StoreReviewRequest $request)
+    public function store(StoreReviewRequest $request): Response
     {
         try {
 
@@ -82,8 +84,9 @@ class ReviewController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Review $review
-     * @return ReviewResource|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @param $intern
+     * @param $assignment
+     * @return ReviewResource|Response
      */
     public function show($intern ,$assignment)
     {
@@ -105,7 +108,7 @@ class ReviewController extends Controller
      *
      * @param UpdateReviewRequest $request
      * @param Review $review
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(UpdateReviewRequest $request, Review $review)
     {
@@ -120,7 +123,7 @@ class ReviewController extends Controller
             }else{
                 return response([
                     'error' => 'Only mentor that did review can edit this review.'
-                ]);
+                ],403);
             }
         }catch(\Exception $e){
             return response([
@@ -133,9 +136,9 @@ class ReviewController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Review $review
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function destroy(Review $review)
+    public function destroy(Review $review): Response
     {
         try {
             $review->delete();

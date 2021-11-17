@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Group extends Model
 {
@@ -31,9 +33,9 @@ class Group extends Model
     /**
      * Returns relationship with User Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function mentor()
+    public function mentor(): HasMany
     {
         return $this->hasMany(User::class);
     }
@@ -41,9 +43,9 @@ class Group extends Model
     /**
      * Returns relationship with Intern Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function intern()
+    public function intern(): HasMany
     {
         return $this->hasMany(Intern::class);
     }
@@ -51,9 +53,9 @@ class Group extends Model
     /**
      * Returns relationship with Assignment Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
-    public function assignment()
+    public function assignment(): BelongsToMany
     {
         return $this->belongsToMany(Assignment::class, 'assignment_groups')
             ->withPivot(

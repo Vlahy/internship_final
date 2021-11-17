@@ -6,13 +6,15 @@ use App\Http\Requests\StoreAssignmentRequest;
 use App\Http\Requests\UpdateAssignmentRequest;
 use App\Http\Resources\AssignmentResource;
 use App\Models\Assignment;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class AssignmentController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\Response
+     * @return AnonymousResourceCollection|Response
      */
     public function index()
     {
@@ -21,7 +23,7 @@ class AssignmentController extends Controller
         }catch (\Exception $e){
             return response([
                 'error' => $e->getMessage()
-            ],403);
+            ],400);
         }
     }
 
@@ -29,9 +31,9 @@ class AssignmentController extends Controller
      * Store a newly created resource in storage.
      *
      * @param StoreAssignmentRequest $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function store(StoreAssignmentRequest $request)
+    public function store(StoreAssignmentRequest $request): Response
     {
         try {
             $validated = $request->validated();
@@ -52,7 +54,7 @@ class AssignmentController extends Controller
      * Display the specified resource.
      *
      * @param Assignment $assignment
-     * @return AssignmentResource|\Illuminate\Http\Response
+     * @return AssignmentResource|Response
      */
     public function show(Assignment $assignment)
     {
@@ -61,7 +63,7 @@ class AssignmentController extends Controller
         }catch (\Exception $e){
             return response([
                 'error' => $e->getMessage()
-            ]);
+            ],400);
         }
     }
 
@@ -70,12 +72,14 @@ class AssignmentController extends Controller
      *
      * @param UpdateAssignmentRequest $request
      * @param Assignment $assignment
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function update(UpdateAssignmentRequest $request, Assignment $assignment)
+    public function update(UpdateAssignmentRequest $request, Assignment $assignment): Response
     {
         try {
-            $assignment->update($request->all());
+            $validated = $request->validated();
+
+            $assignment->update($validated);
 
             return response([
                 'success' => 'Assignment updated successfully!',
@@ -91,9 +95,9 @@ class AssignmentController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Assignment $assignment
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function destroy(Assignment $assignment)
+    public function destroy(Assignment $assignment): Response
     {
         try {
             $assignment->delete();

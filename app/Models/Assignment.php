@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Assignment extends Model
 {
@@ -27,14 +29,15 @@ class Assignment extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
+        'pivot',
     ];
 
     /**
      * Returns relationship with Group Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
-    public function group()
+    public function group(): BelongsToMany
     {
         return $this->belongsToMany(Group::class, 'assignment_groups');
     }
@@ -42,9 +45,9 @@ class Assignment extends Model
     /**
      * Returns relationship with Review Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function review()
+    public function review(): HasMany
     {
         return $this->hasMany(Review::class, 'assignment_id');
     }
