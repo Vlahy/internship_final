@@ -20,7 +20,7 @@
 
 1. Clone repository locally
 
-        `git clone https://github.com/Vlahy/internship_final.git`
+        git clone https://github.com/Vlahy/internship_final.git
 
 2. Install dependencies via composer
 
