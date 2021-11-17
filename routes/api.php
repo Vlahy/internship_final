@@ -25,8 +25,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/interns/{intern}', [\App\Http\Controllers\InternController::class, 'show']);
 
     // Group routes
-    Route::patch('/groups/{group}/assignments/{assignment}/activate', [\App\Http\Controllers\GroupController::class, 'activateAssignment']);
-    Route::patch('/groups/{group}/assignments/{assignment}/deactivate', [\App\Http\Controllers\GroupController::class, 'deactivateAssignment']);
+    Route::put('/groups/{group}/assignments/{assignment}/activate', [\App\Http\Controllers\GroupController::class, 'activateAssignment']);
+    Route::put('/groups/{group}/assignments/{assignment}/deactivate', [\App\Http\Controllers\GroupController::class, 'deactivateAssignment']);
     Route::post('/groups/{group}/assignments/{assignment}/add', [\App\Http\Controllers\GroupController::class, 'addAssignment']);
 
     // Assignment routes
@@ -47,7 +47,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // Routes only Admin can access
     Route::group(['middleware' => ['role:admin']], function () {
 
-        Route::post('/users/{user}/roles', [\App\Http\Controllers\UserController::class, 'changeRole']);
+        Route::post('/auth/changeRole/{user}', [\App\Http\Controllers\UserController::class, 'changeRole']);
         Route::delete('/mentors/{user}', [\App\Http\Controllers\UserController::class, 'destroy']);
         Route::put('/mentors/{user}', [\App\Http\Controllers\UserController::class, 'update']);
         Route::delete('/interns/{intern}', [\App\Http\Controllers\InternController::class, 'destroy']);

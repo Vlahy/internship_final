@@ -1,65 +1,300 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Internship API
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+ API for tracking groups, mentors and interns
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Table of Contents
+* [Project setup](#project setup)
+* [Instructions](#instructions)
+* [Routes](#routes)
+   * [Mentor](#mentor)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Project setup
 
-## Learning Laravel
+1. Clone repository locally
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+        `git clone https://github.com/Vlahy/internship_final.git`
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+2. Install dependencies via composer
 
-## Laravel Sponsors
+        composer install
+        or
+        composer update
+        
+3. Change .env.example name to .env
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+        cd internship_final
+        mv .env.example .env
 
-### Premium Partners
+4. Change database credentials in .env file to your database credentials
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[CMS Max](https://www.cmsmax.com/)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
 
-## Contributing
+5. Create database schema (internship_final)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+        mysql
+        CREATE SCHEMA internship_final;
 
-## Code of Conduct
+6. Run migrations and seeders
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+        php artisan migrate --seed
 
-## Security Vulnerabilities
+7. Run artisan serve to start development server
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+        php artisan serve
 
-## License
+8. You can use Postman to test API routes and endpoints
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## Instructions
+
+Seeder will create two default users (admin and recruiter) with multiple mentors.
+
+You need to log in if You want to use API.
+```
+(POST method): http://localhost:8000/api/auth/login
+```
+Parameters for login are sent in JSON format:
+```
+{
+   "email": "admin@admin.com",
+   "password": "12345678"
+}
+```
+or
+```
+{
+    "email": "recruiter@recruiter.com",
+    "password": "12345678"
+}
+```
+
+When You log in, Postman will return data with Bearer token, which You need to access routes.
+
+Insert token in Authorization tab of Postman. For type select Bearer, and in token section insert given token.
+
+If You want to log in as different user, first You need to log out, and then log in with different credentials. After logging out, token is destroyed, but on log in You get new one.
+
+```
+(POST METHOD): http://localhost:8000/api/auth/logout
+```
+
+Admin can change roles to other users.
+
+Available roles are: admin, recruiter, mentor.
+```
+(POST method): http://localhost:8000/api/auth/changeRole/{id}
+```
+
+---
+
+## Routes
+
+### Mentor
+
+#### Get
+```
+Show all mentors (GET method):  http://localhost:8000/api/mentors
+Show single mentor (GET method): http://localhost:8000/api/mentors/{id}
+```
+
+#### Post/update
+
+Parameters for creating or updating mentors are sent in JSON format:
+
+Only logged-in user or admin can update their information.
+
+```
+{
+   "name": "John Doe",
+   "email": "john@doe.com",
+   "password": "12345678",
+   "password_confirmation": "12345678",
+   "city": "Belgrade",
+   "skype": "skype",
+   "group_id": "1"
+}
+```
+
+```
+Create mentor (POST method): http://localhost:8000/api/mentors
+Update mentor (PUT method): http://localhost:8000/api/mentors/{id}
+```
+
+#### Delete
+
+```
+Delete mentor (DELETE method): http://localhost:8000/api/mentors/{id}
+```
+
+---
+
+### Review
+
+#### Get
+```
+Show all intern reviews (GET method):  http://localhost:8000/api/interns/{internId}/assignments
+Show single intern review (GET method): http://localhost:8000/api/interns/{internId}/assignments/{assignmentId}
+```
+
+#### Post/update
+
+Parameters for creating or updating reviews are sent in JSON format:
+
+Only logged in mentor can create review for interns in the same group.
+
+Mark column can accept: bad, good, excellent
+```
+{
+   "pros": "pros",
+   "cons": "cons",
+   "mark": "good",
+   "assignment_id": "2",
+   "intern_id": "1",
+}
+```
+
+```
+Create review (POST method): http://localhost:8000/api/reviews
+Update review (PUT method): http://localhost:8000/api/reviews/{id}
+```
+
+#### Delete
+
+```
+Delete review (DELETE method): http://localhost:8000/api/review/{id}
+```
+
+
+---
+### Intern
+
+#### Get
+```
+Show all interns (GET method):  http://localhost:8000/api/interns
+Show single intern (GET method): http://localhost:8000/api/interns/{id}
+```
+
+#### Post/update
+
+Parameters for creating or updating interns are sent in JSON format:
+
+
+```
+{
+   "name": "John Doe",
+   "city": "Belgrade",
+   "address": "Some address",
+   "email": "john@doe.com",
+   "phone": "phone",
+   "phone": "+123 456 789 0",
+   "cv": "cv",
+   "github": "github",
+   "group_id": "1"
+}
+```
+
+```
+Create intern (POST method): http://localhost:8000/api/interns
+Update intern (PUT method): http://localhost:8000/api/interns/{id}
+```
+
+#### Delete
+
+```
+Delete intern (DELETE method): http://localhost:8000/api/interns/{id}
+```
+
+---
+
+### Group
+
+#### Get
+```
+Show all groups (GET method):  http://localhost:8000/api/groups
+Show single group (GET method): http://localhost:8000/api/groups/{id}
+```
+
+#### Post/update
+
+Parameters for creating or updating groups are sent in JSON format:
+
+
+```
+{
+   "name": "FE Group 1",
+}
+```
+
+```
+Create group (POST method): http://localhost:8000/api/groups
+Update group (PUT method): http://localhost:8000/api/groups/{id}
+```
+
+#### Delete
+
+```
+Delete group (DELETE method): http://localhost:8000/api/groups/{id}
+```
+
+---
+
+### Assignments
+
+#### Get
+```
+Show all assignments (GET method):  http://localhost:8000/api/assignments
+Show single assignment (GET method): http://localhost:8000/api/assignments/{id}
+```
+
+#### Post/update
+
+Parameters for creating or updating assignments are sent in JSON format:
+
+
+```
+{
+   "name": "Assignment 1",
+   "description": "Do this..."
+}
+```
+
+```
+Create assignment (POST method): http://localhost:8000/api/assignments
+Update assignment (PUT method): http://localhost:8000/api/assignments/{id}
+```
+
+#### Delete
+
+```
+Delete assignment (DELETE method): http://localhost:8000/api/assignments/{id}
+```
+
+#### Add assignment to group
+
+```
+(POST method): http://localhost:8000/api/groups/{groupId}/assignments/{assignmentId}/add
+```
+
+#### Activate assignment
+
+To activate You need to send start date and end date in JSON format
+
+```
+{
+   "start_date": "yy-mm-dd",
+   "end_date": "yy-mm-dd"
+}
+```
+```
+(PUT method): http://localhost:8000/api/groups/{groupId}/assignments/{assignmentId}/activate
+```
+
+#### Deactivate assignment
+
+```
+(PUT method): http://localhost:8000/api/groups/{groupId}/assignments/{assignmentId}/deactivate
+```

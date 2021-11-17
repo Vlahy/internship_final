@@ -22,7 +22,7 @@ class UserController extends Controller
     public function index()
     {
         try {
-            return UserResource::collection(User::paginate(10));
+            return UserResource::collection(User::role('mentor')->paginate(10));
         }catch (\Exception $e){
             return response([
                 'error' => $e->getMessage()
@@ -91,7 +91,7 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user): Response
     {
         try {
-            if(Auth::user()->id == $user['id']) {
+            if(Auth::user()->id == $user['id'] || Auth::user()->role('admin')) {
                 $validated = $request->validated();
 
                 $user->update($validated);
