@@ -3,16 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class Intern extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -21,10 +18,12 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
-        'password',
         'city',
-        'skype',
+        'address',
+        'email',
+        'phone',
+        'cv',
+        'github',
         'group_id'
     ];
 
@@ -34,20 +33,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password',
-        'remember_token',
         'created_at',
         'updated_at',
-        'email_verified_at'
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
     ];
 
     /**
@@ -67,6 +54,7 @@ class User extends Authenticatable
      */
     public function review(): HasMany
     {
-        return $this->HasMany(Review::class, 'mentor_id');
+        return $this->HasMany(Review::class, 'intern_id');
     }
+
 }
