@@ -5,7 +5,7 @@
 ---
 
 ## Table of Contents
-* [Project setup](#project setup)
+* [Project setup](#project-setup)
 * [Instructions](#instructions)
 * [Routes](#routes)
    * [Mentor](#mentor)
