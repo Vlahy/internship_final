@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Enums\ReviewData;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Review extends Model
+class Review extends Model implements ReviewData
 {
     use HasFactory;
 
@@ -18,9 +20,11 @@ class Review extends Model
     protected $fillable = [
         'pros',
         'cons',
+        'mark',
         'assignment_id',
         'mentor_id',
         'intern_id',
+
     ];
 
     /**
@@ -47,9 +51,9 @@ class Review extends Model
     /**
      * Returns relationship with Assignment Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function assignment()
+    public function assignment(): HasMany
     {
         return $this->hasMany(Assignment::class);
     }
@@ -57,9 +61,9 @@ class Review extends Model
     /**
      * Returns relationship with Mentor Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function mentor()
+    public function mentor(): HasMany
     {
         return $this->hasMany(User::class);
     }
@@ -67,9 +71,9 @@ class Review extends Model
     /**
      * Returns relationship with Intern Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function intern()
+    public function intern(): HasMany
     {
         return $this->hasMany(Intern::class);
     }

@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreReviewRequest;
+use App\Http\Requests\UpdateReviewRequest;
 use App\Http\Resources\ReviewResource;
+use App\Models\Intern;
 use App\Models\Review;
-use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\Response
+     * @return AnonymousResourceCollection|Response
      */
     public function index($intern)
     {
@@ -27,19 +32,61 @@ class ReviewController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param StoreReviewRequest $request
+     * @return Response
      */
-    public function store(Request $request)
+    public function store(StoreReviewRequest $request): Response
     {
-        //
+        try {
+
+            $validated = $request->validated();
+            $user = Auth::user();
+
+                $intern = Intern::where('id', $validated['intern_id'])->first();
+
+                if ($user->group_id == $intern->group_id){
+
+                    $internAssignment = $intern->group->assignment->pluck('id')->toArray();
+
+                    if(in_array($validated['assignment_id'], $internAssignment)){
+
+                        Review::create([
+                            'pros' => $validated['pros'],
+                            'cons' => $validated['cons'],
+                            'mark' => $validated['mark'],
+                            'assignment_id' => $validated['assignment_id'],
+                            'mentor_id' => $user->id,
+                            'intern_id' => $validated['intern_id'],
+                        ]);
+
+                        return response([
+                            'success' => "Review is added successfully."
+                        ],200);
+                    }else{
+                        return response([
+                            'error' => 'Intern does not have that assignment!'
+                        ],200);
+                    }
+
+                }else{
+                    return response([
+                        'error' => 'Mentor is not in the same group as intern!'
+                    ],400);
+                }
+
+        }catch (\Exception $e){
+            return response([
+                'error' => $e->getMessage()
+            ],400);
+        }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Review  $review
-     * @return ReviewResource|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @param $intern
+     * @param $assignment
+     * @return ReviewResource|Response
      */
     public function show($intern ,$assignment)
     {
@@ -59,22 +106,39 @@ class ReviewController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Review  $review
-     * @return \Illuminate\Http\Response
+     * @param UpdateReviewRequest $request
+     * @param Review $review
+     * @return Response
      */
-    public function update(Request $request, Review $review)
+    public function update(UpdateReviewRequest $request, Review $review)
     {
-        //
+        try {
+            $user = Auth::user();
+            if ($user->id == $review->mentor_id) {
+
+                $review->update($request->all());
+                return response([
+                    'success' => 'Review updated successfully!',
+                ], 200);
+            }else{
+                return response([
+                    'error' => 'Only mentor that did review can edit this review.'
+                ],403);
+            }
+        }catch(\Exception $e){
+            return response([
+                'error' => $e->getMessage(),
+            ],400);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Review  $review
-     * @return \Illuminate\Http\Response
+     * @param Review $review
+     * @return Response
      */
-    public function destroy(Review $review)
+    public function destroy(Review $review): Response
     {
         try {
             $review->delete();

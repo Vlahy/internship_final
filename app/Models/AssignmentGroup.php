@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AssignmentGroup extends Model
 {
@@ -32,9 +33,9 @@ class AssignmentGroup extends Model
     /**
      * Returns relationship with Assignment Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function assignment()
+    public function assignment(): HasMany
     {
         return $this->hasMany(AssignmentGroup::class);
     }
@@ -42,9 +43,9 @@ class AssignmentGroup extends Model
     /**
      * Returns relationship with Group Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function group()
+    public function group(): HasMany
     {
         return $this->hasMany(Group::class);
     }

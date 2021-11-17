@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Intern extends Model
 {
@@ -38,9 +40,9 @@ class Intern extends Model
     /**
      * Returns relationship with Group Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function group()
+    public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);
     }
@@ -48,9 +50,9 @@ class Intern extends Model
     /**
      * Returns relationship with Review Model
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function review()
+    public function review(): HasMany
     {
         return $this->HasMany(Review::class, 'intern_id');
     }
