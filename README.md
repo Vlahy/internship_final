@@ -9,6 +9,10 @@
 * [Instructions](#instructions)
 * [Routes](#routes)
    * [Mentor](#mentor)
+   * [Review](#review)
+   * [Intern](#intern)
+   * [Group](#group)
+   * [Assignment](#assignments)
 
 ---
 
